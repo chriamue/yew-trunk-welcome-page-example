@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Redirecting...</title>
+        <script>
+            var segmentCount = 1;
+            var location = window.location;
+            var repo = "/yew-trunk-welcome-page-example";
+            var path = location.pathname.slice(1).split("/")[1];
+            if (path === "p") {
+                window.location.href = repo + "/p/";
+            } else {
+                window.location.href = repo + "/";
+            }
+        </script>
+    </head>
+    <body>
+        Redirecting...
+    </body>
+</html>

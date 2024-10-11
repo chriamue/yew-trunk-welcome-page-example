@@ -28,8 +28,22 @@ jobs:
       - name: Get repository name
         run: echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
 
-      - name: Build
-        run: echo ${{ env.REPO_NAME }} && trunk build --release --public-url /${{ env.REPO_NAME }}
+      - name: Build welcome page
+        run: |
+          cd welcome-page
+          trunk build --release --public-url /${{ env.REPO_NAME }}
+
+      - name: Build main app
+        run: trunk build --release --public-url /${{ env.REPO_NAME }}/p
+
+      - name: Prepare dist directory
+        run: |
+          mkdir -p dist_temp/p
+          cp -r welcome-page/dist/* dist_temp/
+          cp -r dist/* dist_temp/p/
+          rm -rf dist
+          mv dist_temp dist
+          cp dist/index.html dist/404.html
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
