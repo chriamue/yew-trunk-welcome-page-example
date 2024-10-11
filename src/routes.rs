@@ -1,4 +1,5 @@
 use crate::about::About;
+use crate::config::full_path;
 use crate::home::Home;
 use welcome_page::Welcome;
 use yew::prelude::*;
@@ -19,12 +20,23 @@ pub enum Route {
     NotFound,
 }
 
+impl Route {
+    pub fn to_path(&self) -> String {
+        full_path(match self {
+            Route::Root => "/",
+            Route::Welcome => "/p/welcome",
+            Route::Home => "/p",
+            Route::About => "/p/about",
+            Route::NotFound => "/p/404",
+        })
+    }
+}
+
 pub fn switch(route: Route) -> Html {
     match route {
         Route::Home => html! { <Home /> },
         Route::About => html! { <About /> },
-        Route::Root => html! { <Welcome /> },
-        Route::Welcome => html! { <Welcome /> },
+        Route::Root | Route::Welcome => html! { <Welcome /> },
         Route::NotFound => html! { <h1>{"404"}</h1> },
     }
 }

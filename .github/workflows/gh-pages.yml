@@ -25,25 +25,32 @@ jobs:
         with:
           version: "latest"
 
-      - name: Get repository name
-        run: echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+      - name: Set BASE_PATH
+        run: echo "BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
 
       - name: Build welcome page
         run: |
           cd welcome-page
-          trunk build --release --public-url /${{ env.REPO_NAME }}
+          BASE_PATH=${{ env.BASE_PATH }} trunk build --release --public-url ${{ env.BASE_PATH }}
+          cd ..
 
       - name: Build main app
-        run: trunk build --release --public-url /${{ env.REPO_NAME }}/p
+        run: BASE_PATH=${{ env.BASE_PATH }} trunk build --release --public-url ${{ env.BASE_PATH }}/p
 
       - name: Prepare dist directory
         run: |
           mkdir -p dist_temp/p
+          mkdir -p dist_temp/p/{welcome,about}
           cp -r welcome-page/dist/* dist_temp/
           cp -r dist/* dist_temp/p/
+          cp dist_temp/p/index.html dist_temp/p/welcome/index.html
+          cp dist_temp/p/index.html dist_temp/p/about/index.html
           rm -rf dist
           mv dist_temp dist
           cp dist/index.html dist/404.html
+
+      - name: Update 404.html
+        run: sed -i 's|BASE_PATH_PLACEHOLDER|'${{ env.BASE_PATH }}'|g' dist/404.html
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

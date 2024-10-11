@@ -1,5 +1,6 @@
 pub mod about;
 pub mod app;
+pub mod config;
 pub mod home;
 pub mod navigation;
 pub mod routes;

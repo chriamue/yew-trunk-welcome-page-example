@@ -4,14 +4,12 @@
         <meta charset="utf-8" />
         <title>Redirecting...</title>
         <script>
-            var segmentCount = 1;
-            var location = window.location;
-            var repo = "/yew-trunk-welcome-page-example";
-            var path = location.pathname.slice(1).split("/")[1];
-            if (path === "p") {
-                window.location.href = repo + "/p/";
+            var basePath = "BASE_PATH_PLACEHOLDER";
+            var path = window.location.pathname;
+            if (path.startsWith(basePath + "/p")) {
+                window.location.href = basePath + "/p/";
             } else {
-                window.location.href = repo + "/";
+                window.location.href = basePath + "/";
             }
         </script>
     </head>
