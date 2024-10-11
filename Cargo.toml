@@ -9,7 +9,10 @@ members = ["welcome-page"]
 [workspace.dependencies]
 yew = { version = "0.21", features = ["csr"] }
 web-sys = "0.3"
+yew-router = "0.18"
 
 [dependencies]
 yew = { workspace = true }
 web-sys = { workspace = true }
+yew-router = { workspace = true }
+welcome-page = { path = "welcome-page" }
