@@ -3,5 +3,14 @@ name = "yew-trunk-welcome-page-example"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "yew-trunk-welcome-page-example-pwa"
+path = "src/bin/main.rs"
+
+[[bin]]
+name = "yew-trunk-welcome-page-example-welcome"
+path = "src/bin/welcome.rs"
+
 [dependencies]
 yew = { version = "0.21", features = ["csr"] }
+web-sys = "0.3"
