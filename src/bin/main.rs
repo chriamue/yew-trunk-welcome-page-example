@@ -1,3 +1,4 @@
+use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yew_trunk_welcome_page_example::config::BASE_PATH;
@@ -12,7 +13,8 @@ fn main_app() -> Html {
     }
 }
 
-fn main() {
+#[wasm_bindgen]
+pub fn run_app() -> Result<(), JsValue> {
     let root = web_sys::window()
         .unwrap()
         .document()
@@ -21,4 +23,9 @@ fn main() {
         .unwrap()
         .unwrap();
     yew::Renderer::<Main>::with_root(root).render();
+    Ok(())
+}
+
+pub fn main() {
+    //run_app().expect("Failed to run app");
 }

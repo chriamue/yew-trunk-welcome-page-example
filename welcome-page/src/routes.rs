@@ -29,12 +29,3 @@ impl Route {
         })
     }
 }
-
-pub fn switch(route: Route) -> Html {
-    match route {
-        Route::Home => html! {  <NotFound />  },
-        Route::About => html! {  <NotFound />  },
-        Route::Root | Route::Welcome => html! { <Welcome /> },
-        Route::NotFound => html! { <NotFound />  },
-    }
-}

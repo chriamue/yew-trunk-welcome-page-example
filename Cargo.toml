@@ -10,9 +10,12 @@ members = ["welcome-page"]
 yew = { version = "0.21", features = ["csr"] }
 web-sys = "0.3"
 yew-router = "0.18"
+wasm-bindgen-futures = "0.4"
+wasm-bindgen = "0.2"
 
 [dependencies]
 yew = { workspace = true }
 web-sys = { workspace = true }
 yew-router = { workspace = true }
 welcome-page = { path = "welcome-page" }
+wasm-bindgen = { workspace = true }
