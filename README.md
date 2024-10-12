@@ -12,3 +12,8 @@ trunk build --release
 ```bash
 trunk serve
 ```
+
+## TODO
+
+The main app must have proper exports.
+The load main app must access it to render the right route.
