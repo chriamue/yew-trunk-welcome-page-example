@@ -4,10 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+log = "0.4"
 yew = { workspace = true }
 web-sys = { workspace = true }
 yew-router = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
 wasm-bindgen = { workspace = true }
-serde = { workspace = true }
-serde_json = { workspace = true }
+js-sys = "0.3"
+gloo-timers = { version = "0.3", features = ["futures"] }
+wasm-logger = "0.2"

@@ -14,17 +14,15 @@ fn main_app() -> Html {
 }
 
 #[wasm_bindgen]
-pub fn run_app() {
-    let root = web_sys::window()
-        .unwrap()
-        .document()
-        .unwrap()
-        .query_selector("#app")
-        .unwrap()
-        .unwrap();
+pub fn render_app(root_selector: String) {
+    let window = web_sys::window().unwrap();
+    let document = window.document().unwrap();
+    let root = document
+        .query_selector(&root_selector)
+        .expect("Failed to find root element")
+        .expect("Root element is None");
+
     yew::Renderer::<Main>::with_root(root).render();
 }
 
-pub fn main() {
-    run_app();
-}
+pub fn main() {}

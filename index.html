@@ -13,7 +13,7 @@
             data-wasm-opt="z"
             data-type="worker"
             data-bin="main"
-            data-loader-shim
+            data-typescript
         />
 
         <!-- Link to load the welcome page app -->
@@ -28,10 +28,43 @@
     <body>
         <!-- The welcome app will be mounted here -->
         <div id="welcome"></div>
+        <script>
+            // Function to load main.js
+            function loadMainJs() {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement("script");
+                    script.src = "/main.js";
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.body.appendChild(script);
+                });
+            }
 
-        <!-- The main app (fat app) will be mounted here -->
-        <div id="app" style="display: none"></div>
+            // Function to initialize the main app
+            async function initializeMainApp() {
+                try {
+                    await loadMainJs();
+                    console.log("main.js loaded successfully");
 
-        <script src="main_loader.js"></script>
+                    // Wait for the wasm_bindgen global to be available
+                    while (!window.wasmBindings) {
+                        await new Promise((resolve) => setTimeout(resolve, 50));
+                    }
+
+                    // Initialize the WASM module
+                    await wasm_bindgen("/main_bg.wasm");
+                    console.log("WASM module initialized");
+
+                    // Expose the render_app function globally
+                    window.render_app = wasm_bindgen.render_app;
+                    console.log("render_app function exposed globally");
+                } catch (error) {
+                    console.error("Error initializing main app:", error);
+                }
+            }
+
+            // Call the initialization function
+            initializeMainApp();
+        </script>
     </body>
 </html>

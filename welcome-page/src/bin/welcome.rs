@@ -1,6 +1,8 @@
 use welcome_page::App;
 
 fn main() {
+    wasm_logger::init(wasm_logger::Config::default());
+    log::info!("Welcome page initialized");
     let root = web_sys::window()
         .unwrap()
         .document()

@@ -1,58 +1,63 @@
-use crate::Route;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
 use yew::prelude::*;
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-
-    #[wasm_bindgen(js_name = renderApp)]
-    fn render_app();
+#[derive(Clone, PartialEq, Debug)]
+enum AppJsState {
+    NotLoaded,
+    Loading,
+    Loaded,
+    Error(String),
 }
 
 #[function_component(LoadMainApp)]
 pub fn load_main_app() -> Html {
-    let loaded = use_state(|| false);
-    let error = use_state(|| None);
+    let app_js_state = use_state(|| AppJsState::NotLoaded);
+    log::debug!("AppJsState: {:?}", *app_js_state);
 
     {
-        let loaded = loaded.clone();
-        let error = error.clone();
+        let app_js_state = app_js_state.clone();
+
         use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                match std::panic::catch_unwind(|| render_app()) {
-                    Ok(_) => {
-                        // Hide the welcome div and show the app div
-                        let window = web_sys::window().unwrap();
-                        let document = window.document().unwrap();
-                        let welcome_div = document.query_selector("#welcome").unwrap().unwrap();
-                        let app_div = document.query_selector("#app").unwrap().unwrap();
+            if *app_js_state == AppJsState::NotLoaded {
+                app_js_state.set(AppJsState::Loading);
 
-                        welcome_div
-                            .set_attribute("style", "display: none;")
-                            .unwrap();
-                        app_div.set_attribute("style", "display: block;").unwrap();
+                log::debug!("Loading main app script...");
 
-                        loaded.set(true);
+                wasm_bindgen_futures::spawn_local(async move {
+                    let window = web_sys::window().expect("no global `window` exists");
+
+                    log::info!("Loading main app...");
+                    // Wait for render_app to be available
+                    while js_sys::Reflect::get(&window, &JsValue::from_str("render_app")).is_err() {
+                        gloo_timers::future::TimeoutFuture::new(150).await;
                     }
-                    Err(e) => {
-                        let error_msg = format!("Failed to render main app: {:?}", e);
-                        log(&error_msg);
-                        error.set(Some(error_msg));
+
+                    match js_sys::Reflect::get(&window, &JsValue::from_str("render_app")) {
+                        Ok(render_app_fn) => {
+                            log::info!("render_app function found");
+                            let render_app: js_sys::Function = render_app_fn.dyn_into().unwrap();
+                            let _ = render_app.call1(&JsValue::NULL, &JsValue::from_str("#app"));
+
+                            app_js_state.set(AppJsState::Loaded);
+                        }
+                        Err(e) => {
+                            app_js_state.set(AppJsState::Error(format!(
+                                "Failed to get render_app function: {:?}",
+                                e
+                            )));
+                        }
                     }
-                }
-            });
+                });
+            }
             || ()
         });
     }
 
-    if *loaded {
-        // We won't return anything here since the main app is loaded in a separate container.
-        html! {}
-    } else if let Some(err) = error.as_ref() {
-        html! { <div>{err}</div> }
-    } else {
-        html! { <div>{"Loading..."}</div> }
+    match (*app_js_state).clone() {
+        AppJsState::Loaded => html! { <div id="app"></div> },
+        AppJsState::Error(err) => html! { <div id="app">{"Error loading main app: "}{err}</div> },
+        AppJsState::Loading => html! { <div id="app">{"Loading..."}</div> },
+        AppJsState::NotLoaded => html! { <div id="app">{"Preparing to load main app..."}</div> },
     }
 }
