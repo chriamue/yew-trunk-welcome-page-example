@@ -4,16 +4,19 @@
         <meta charset="utf-8" />
         <title>Yew Trunk Welcome Page Example</title>
         <link data-trunk rel="icon" href="favicon.png" />
-    </head>
-    <body>
+
+        <!-- Link to load the main app (fat app) -->
         <link
             data-trunk
             rel="rust"
             href="Cargo.toml"
             data-wasm-opt="z"
-            data-bin="main"
             data-type="worker"
+            data-bin="main"
+            data-loader-shim
         />
+
+        <!-- Link to load the welcome page app -->
         <link
             data-trunk
             rel="rust"
@@ -21,6 +24,14 @@
             data-wasm-opt="z"
             data-bin="welcome"
         />
+    </head>
+    <body>
+        <!-- The welcome app will be mounted here -->
         <div id="welcome"></div>
+
+        <!-- The main app (fat app) will be mounted here -->
+        <div id="app" style="display: none"></div>
+
+        <script src="main_loader.js"></script>
     </body>
 </html>

@@ -14,7 +14,7 @@ fn main_app() -> Html {
 }
 
 #[wasm_bindgen]
-pub fn run_app() -> Result<(), JsValue> {
+pub fn run_app() {
     let root = web_sys::window()
         .unwrap()
         .document()
@@ -23,9 +23,8 @@ pub fn run_app() -> Result<(), JsValue> {
         .unwrap()
         .unwrap();
     yew::Renderer::<Main>::with_root(root).render();
-    Ok(())
 }
 
 pub fn main() {
-    //run_app().expect("Failed to run app");
+    run_app();
 }
