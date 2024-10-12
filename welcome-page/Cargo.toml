@@ -9,3 +9,5 @@ web-sys = { workspace = true }
 yew-router = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
 wasm-bindgen = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

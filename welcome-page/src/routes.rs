@@ -1,9 +1,8 @@
 use crate::config::full_path;
-use crate::{NotFound, Welcome};
-use yew::prelude::*;
+use serde::Serialize;
 use yew_router::prelude::*;
 
-#[derive(Clone, Routable, PartialEq)]
+#[derive(Clone, Routable, PartialEq, Serialize, Debug)]
 pub enum Route {
     #[at("/")]
     Root,
