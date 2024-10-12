@@ -4,15 +4,24 @@
         <meta charset="utf-8" />
         <title>Yew Trunk Welcome Page Example</title>
         <link data-trunk rel="icon" href="favicon.png" />
+    </head>
+    <body>
         <link
             data-trunk
             rel="rust"
             href="Cargo.toml"
             data-wasm-opt="z"
             data-bin="main"
+            data-type="worker"
         />
-    </head>
-    <body>
+        <link
+            data-trunk
+            rel="rust"
+            href="welcome-page/Cargo.toml"
+            data-wasm-opt="z"
+            data-bin="main"
+        />
+        <div id="welcome"></div>
         <div id="app"></div>
     </body>
 </html>

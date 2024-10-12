@@ -1,4 +1,4 @@
-use welcome_page::Welcome;
+use welcome_page::App;
 
 fn main() {
     let root = web_sys::window()
@@ -8,5 +8,5 @@ fn main() {
         .query_selector("#welcome")
         .unwrap()
         .unwrap();
-    yew::Renderer::<Welcome>::with_root(root).render();
+    yew::Renderer::<App>::with_root(root).render();
 }
