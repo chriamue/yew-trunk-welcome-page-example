@@ -1,15 +1,8 @@
-let wasm_bindgen;
-(function() {
-    const __exports = {};
-    let script_src;
-    if (typeof document !== 'undefined' && document.currentScript !== null) {
-        script_src = new URL(document.currentScript.src, location.href).toString();
-    }
-    let wasm = undefined;
+let wasm;
 
-    const heap = new Array(128).fill(undefined);
+const heap = new Array(128).fill(undefined);
 
-    heap.push(undefined, null, true, false);
+heap.push(undefined, null, true, false);
 
 function getObject(idx) { return heap[idx]; }
 
@@ -270,11 +263,11 @@ function __wbg_adapter_46(arg0, arg1, arg2) {
 /**
  * @param {string} root_selector
  */
-__exports.render_app = function(root_selector) {
+export function render_app(root_selector) {
     const ptr0 = passStringToWasm0(root_selector, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
     wasm.render_app(ptr0, len0);
-};
+}
 
 function handleError(f, args) {
     try {
@@ -990,8 +983,8 @@ async function __wbg_init(module_or_path) {
         }
     }
 
-    if (typeof module_or_path === 'undefined' && typeof script_src !== 'undefined') {
-        module_or_path = script_src.replace(/\.js$/, '_bg.wasm');
+    if (typeof module_or_path === 'undefined') {
+        module_or_path = new URL('main_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 
@@ -1006,6 +999,5 @@ async function __wbg_init(module_or_path) {
     return __wbg_finalize_init(instance, module);
 }
 
-wasm_bindgen = Object.assign(__wbg_init, { initSync }, __exports);
-
-})();
+export { initSync };
+export default __wbg_init;
