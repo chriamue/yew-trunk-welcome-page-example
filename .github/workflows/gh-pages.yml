@@ -21,25 +21,27 @@ jobs:
           override: true
 
       - name: Install trunk
-        uses: jetli/trunk-action@v0.4.0
+        uses: jetli/trunk-action@v0.5.0
         with:
           version: "latest"
 
       - name: Set BASE_PATH
         run: echo "BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
 
-      - name: Build welcome page
+      - name: Build main page
         run: |
-          cd welcome-page
-          BASE_PATH=${{ env.BASE_PATH }} trunk build --release --public-url ${{ env.BASE_PATH }}
-          cd ..
-
-      - name: Build main app
-        run: BASE_PATH=${{ env.BASE_PATH }} trunk build --release --public-url ${{ env.BASE_PATH }}/p
+          BASE_PATH=${{ env.BASE_PATH }}/p trunk build --release --public-url=${{ env.BASE_PATH }}/p
 
       - name: Prepare dist directory
         run: |
           mkdir -p dist_temp/p
+          cp dist/index.html dist_temp/p/index.html
+
+      - name: Build welcome app
+        run: BASE_PATH=${{ env.BASE_PATH }} trunk build --release --public-url=${{ env.BASE_PATH }}
+
+      - name: Prepare dist directory
+        run: |
           mkdir -p dist_temp/p/{welcome,about}
           cp -r welcome-page/dist/* dist_temp/
           cp -r dist/* dist_temp/p/
