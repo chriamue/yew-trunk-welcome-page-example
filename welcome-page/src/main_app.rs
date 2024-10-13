@@ -10,8 +10,8 @@ enum AppJsState {
     Error(String),
 }
 
-#[function_component(LoadMainApp)]
-pub fn load_main_app() -> Html {
+#[function_component(MainApp)]
+pub fn main_app() -> Html {
     let app_js_state = use_state(|| AppJsState::NotLoaded);
     log::debug!("AppJsState: {:?}", *app_js_state);
 

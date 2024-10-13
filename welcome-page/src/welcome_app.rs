@@ -1,5 +1,5 @@
 use crate::routes::Route;
-use crate::LoadMainApp;
+use crate::MainApp;
 use crate::Welcome;
 use yew::prelude::*;
 
@@ -9,7 +9,7 @@ impl crate::Switch for WelcomeApp {
     fn switch(&self, route: &Route) -> Html {
         match route {
             Route::Root | Route::Welcome => html! { <Welcome /> },
-            _ => html! { <LoadMainApp /> },
+            _ => html! { <MainApp /> },
         }
     }
 }

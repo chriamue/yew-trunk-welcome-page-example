@@ -24,16 +24,24 @@
             data-wasm-opt="z"
             data-bin="welcome"
         />
+        <base data-trunk-public-url />
     </head>
     <body>
         <!-- The welcome app will be mounted here -->
         <div id="welcome"></div>
+
         <script>
+            // Function to get the base URL from the <base> tag
+            function getBaseUrl() {
+                const baseTag = document.querySelector("base");
+                return baseTag ? baseTag.getAttribute("href") : "/";
+            }
+
             // Function to load main.js
             function loadMainJs() {
                 return new Promise((resolve, reject) => {
                     const script = document.createElement("script");
-                    const basePath = window.BASE_PATH || "/";
+                    const basePath = getBaseUrl();
                     console.log("Loading main.js from:", `${basePath}main.js`);
                     script.src = `${basePath}main.js`;
                     script.onload = resolve;
@@ -54,7 +62,7 @@
                     }
 
                     // Initialize the WASM module
-                    const basePath = window.BASE_PATH || "/";
+                    const basePath = getBaseUrl();
                     await wasm_bindgen(`${basePath}main_bg.wasm`);
                     console.log("WASM module initialized");
 

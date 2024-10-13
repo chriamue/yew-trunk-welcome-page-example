@@ -1,4 +1,4 @@
-use crate::{LoadMainApp, Navigation, Route, Switch as _, WelcomeApp};
+use crate::{MainApp, Navigation, Route, Switch as _, WelcomeApp};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -26,10 +26,10 @@ pub fn app() -> Html {
                 _ => {
                     app_state.set(AppState::Main);
                     log::info!("Switching to main app {:?}", route);
-                    html! { <LoadMainApp /> }
+                    html! { <MainApp /> }
                 }
             },
-            AppState::Main => html! { <LoadMainApp /> },
+            AppState::Main => html! { <MainApp /> },
         }
     };
 
