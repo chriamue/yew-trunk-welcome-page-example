@@ -13,6 +13,7 @@
             data-wasm-opt="z"
             data-type="worker"
             data-bin="main"
+            data-bindgen-target="web"
             data-typescript
         />
 
@@ -30,52 +31,25 @@
         <!-- The welcome app will be mounted here -->
         <div id="welcome"></div>
 
-        <script>
-            // Function to get the base URL from the <base> tag
+        <script type="module">
             function getBaseUrl() {
                 const baseTag = document.querySelector("base");
                 return baseTag ? baseTag.getAttribute("href") : "/";
             }
 
-            // Function to load main.js
-            function loadMainJs() {
-                return new Promise((resolve, reject) => {
-                    const script = document.createElement("script");
-                    const basePath = getBaseUrl();
-                    console.log("Loading main.js from:", `${basePath}main.js`);
-                    script.src = `${basePath}main.js`;
-                    script.onload = resolve;
-                    script.onerror = reject;
-                    document.body.appendChild(script);
-                });
+            const baseUrl = getBaseUrl();
+            const mainJsUrl = baseUrl + "main.js";
+
+            async function load() {
+                const { default: init, render_app } = await import(mainJsUrl);
+                await init();
+                window.render_app = render_app;
+                console.log(
+                    "WASM module initialized and render_app function exposed globally",
+                );
             }
 
-            // Function to initialize the main app
-            async function initializeMainApp() {
-                try {
-                    await loadMainJs();
-                    console.log("main.js loaded successfully");
-
-                    // Wait for the wasm_bindgen global to be available
-                    while (!window.wasmBindings) {
-                        await new Promise((resolve) => setTimeout(resolve, 50));
-                    }
-
-                    // Initialize the WASM module
-                    const basePath = getBaseUrl();
-                    await wasm_bindgen(`${basePath}main_bg.wasm`);
-                    console.log("WASM module initialized");
-
-                    // Expose the render_app function globally
-                    window.render_app = wasm_bindgen.render_app;
-                    console.log("render_app function exposed globally");
-                } catch (error) {
-                    console.error("Error initializing main app:", error);
-                }
-            }
-
-            // Call the initialization function
-            initializeMainApp();
+            load();
         </script>
     </body>
 </html>
