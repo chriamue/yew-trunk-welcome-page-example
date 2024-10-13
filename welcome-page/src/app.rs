@@ -1,6 +1,11 @@
-use crate::{AppState, LoadMainApp, Navigation, Route, Switch as _, Welcome};
+use crate::{LoadMainApp, Navigation, Route, Switch as _, WelcomeApp};
 use yew::prelude::*;
 use yew_router::prelude::*;
+
+pub enum AppState {
+    Welcome,
+    Main,
+}
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -32,16 +37,5 @@ pub fn app() -> Html {
         <BrowserRouter>
             <Switch<Route> render={switch} />
         </BrowserRouter>
-    }
-}
-
-pub struct WelcomeApp;
-
-impl crate::Switch for WelcomeApp {
-    fn switch(&self, route: &Route) -> Html {
-        match route {
-            Route::Root | Route::Welcome => html! { <Welcome /> },
-            _ => html! { <LoadMainApp /> },
-        }
     }
 }
