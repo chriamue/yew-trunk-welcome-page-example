@@ -4,15 +4,15 @@ use yew_router::prelude::*;
 pub enum Route {
     #[at("/")]
     Root,
-    #[at("/welcome")]
+    #[at("/welcome/")]
     Welcome,
-    #[at("/home")]
+    #[at("/home/")]
     Home,
-    #[at("/about")]
+    #[at("/about/")]
     About,
-    #[at("/projects")]
+    #[at("/projects/")]
     Projects,
-    #[at("/project/:id")]
+    #[at("/project/:id/")]
     Project { id: String },
     #[not_found]
     #[at("/*")]
