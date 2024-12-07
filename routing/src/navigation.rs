@@ -9,6 +9,7 @@ pub fn navigation() -> Html {
             <ul>
                 <li><Link<Route> to={Route::Welcome}>{"Welcome"}</Link<Route>></li>
                 <li><Link<Route> to={Route::Home}>{"Home"}</Link<Route>></li>
+                <li><Link<Route> to={Route::Projects}>{"Projects"}</Link<Route>></li>
                 <li><Link<Route> to={Route::About}>{"About"}</Link<Route>></li>
             </ul>
         </nav>

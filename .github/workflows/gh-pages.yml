@@ -1,3 +1,5 @@
+name: GitHub Pages
+
 on:
   push:
     branches: ["main"]
@@ -36,13 +38,20 @@ jobs:
           export BASE_PATH=""
           trunk build --release --public-url="/"
 
-      # Setup routes
+      # Setup static routes and project routes
       - name: Setup routes
         run: |
-          mkdir -p dist/{welcome,about,home}
+          mkdir -p dist/{welcome,about,home,projects,project}
           cp dist/index.html dist/welcome/index.html
           cp dist/index.html dist/about/index.html
           cp dist/index.html dist/home/index.html
+          cp dist/index.html dist/projects/index.html
+          cp dist/index.html dist/project/index.html
+
+      # Add _redirects file for Cloudflare Pages
+      - name: Create redirects
+        run: |
+          cp _redirects dist/_redirects
 
       # Prepare distribution
       - name: Prepare final distribution

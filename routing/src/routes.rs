@@ -10,6 +10,10 @@ pub enum Route {
     Home,
     #[at("/about")]
     About,
+    #[at("/projects")]
+    Projects,
+    #[at("/project/:id")]
+    Project { id: String },
     #[not_found]
     #[at("/*")]
     NotFound,
@@ -24,10 +28,12 @@ impl Route {
             .unwrap_or_default();
 
         let path = match self {
-            Route::Root => "/",
+            Route::Root => "/".into(),
             Route::Welcome => "/welcome",
             Route::Home => "/home",
             Route::About => "/about",
+            Route::Projects => "/projects",
+            Route::Project { id } => &format!("/project/{}", id),
             Route::NotFound => "/404",
         };
 
