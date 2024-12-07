@@ -1,4 +1,7 @@
 /target
 /dist
-
+/dist_temp
+**/*.rs.bk
 Cargo.lock
+.DS_Store
+.idea/

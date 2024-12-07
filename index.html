@@ -34,11 +34,12 @@
         <script type="module">
             function getBaseUrl() {
                 const baseTag = document.querySelector("base");
-                return baseTag ? baseTag.getAttribute("href") : "/";
+                const href = baseTag ? baseTag.getAttribute("href") : "/";
+                return href.endsWith("/") ? href : href + "/";
             }
 
             const baseUrl = getBaseUrl();
-            const mainJsUrl = baseUrl + "main.js";
+            const mainJsUrl = `${baseUrl}main.js`;
 
             async function load() {
                 const { default: init, render_app } = await import(mainJsUrl);

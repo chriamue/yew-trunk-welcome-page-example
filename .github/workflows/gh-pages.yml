@@ -6,12 +6,17 @@ on:
   pull_request:
     branches: ["main"]
 
+env:
+  CARGO_TERM_COLOR: always
+  BASE_URL: "" # Empty for root
+  MAIN_APP_PATH: "/p" # main application path
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -20,39 +25,42 @@ jobs:
           target: wasm32-unknown-unknown
           override: true
 
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
       - name: Install trunk
         uses: jetli/trunk-action@v0.5.0
         with:
           version: "latest"
 
-      - name: Set BASE_PATH
-        run: echo "BASE_PATH=/" >> $GITHUB_ENV
-        #run: echo "BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
-
-      - name: Build main page
+      # Build Main Application
+      - name: Build main application
         run: |
-          BASE_PATH=${{ env.BASE_PATH }}/p trunk build --release --public-url=${{ env.BASE_PATH }}/p
+          export BASE_PATH="${{ env.MAIN_APP_PATH }}"
+          trunk build --release --public-url="${{ env.MAIN_APP_PATH }}"
+          mkdir -p dist_temp"${BASE_PATH}"
+          cp -r dist/* dist_temp"${BASE_PATH}"/
 
-      - name: Prepare dist directory
+      # Setup routes
+      - name: Setup main app routes
         run: |
-          mkdir -p dist_temp/p
-          cp -r dist/* dist_temp/p/
-          mkdir -p dist_temp/p/{welcome,about}
-          cp dist_temp/p/index.html dist_temp/p/welcome/index.html
-          cp dist_temp/p/index.html dist_temp/p/about/index.html
+          mkdir -p dist_temp${{ env.MAIN_APP_PATH }}/{welcome,about}
+          cp dist_temp${{ env.MAIN_APP_PATH }}/index.html dist_temp${{ env.MAIN_APP_PATH }}/welcome/index.html
+          cp dist_temp${{ env.MAIN_APP_PATH }}/index.html dist_temp${{ env.MAIN_APP_PATH }}/about/index.html
 
+      # Build Welcome App
       - name: Build welcome app
-        run: BASE_PATH=${{ env.BASE_PATH }} trunk build --release --public-url=${{ env.BASE_PATH }}
-
-      - name: Prepare dist directory
         run: |
+          export BASE_PATH=""
+          trunk build --release --public-url="${{ env.BASE_URL }}"
           cp -r dist/* dist_temp/
+
+      # Prepare distribution
+      - name: Prepare final distribution
+        run: |
           rm -rf dist
           mv dist_temp dist
           cp dist/index.html dist/404.html
-
-      - name: Update 404.html
-        run: sed -i 's|BASE_PATH_PLACEHOLDER|'${{ env.BASE_PATH }}'|g' dist/404.html
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -60,3 +68,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          force_orphan: true
+          enable_jekyll: false
