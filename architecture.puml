@@ -1,0 +1,26 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Container diagram for Yew Trunk Welcome Page Example
+
+Person(user, "User", "A user visiting the web application")
+
+System_Boundary(spa, "Single Page Application") {
+    Container(welcome_page, "Welcome Page", "Yew/WASM", "Fast-loading welcome component")
+    Container(main_app, "Main Application", "Yew/WASM", "Feature-rich main application")
+    Container(router, "Router", "Yew Router", "Handles route management")
+}
+
+System_Ext(github, "GitHub", "Hosts built static files")
+System_Ext(cloudflare, "Cloudflare Pages", "CDN and hosting platform")
+
+Rel(user, cloudflare, "Visits website", "HTTPS")
+Rel(cloudflare, spa, "Serves from", "HTTPS")
+Rel(cloudflare, router, "Redirects to", "HTTPS")
+Rel_L(welcome_page, main_app, "Loads when needed")
+Rel(main_app, router, "Uses")
+Rel(welcome_page, router, "Uses")
+Rel(router, github, "Routes to", "HTTPS")
+
+LAYOUT_WITH_LEGEND()
+@enduml

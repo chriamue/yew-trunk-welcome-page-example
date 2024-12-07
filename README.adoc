@@ -1,0 +1,58 @@
+= Yew Trunk Welcome Page Example
+
+This is an example of how to build a small and fast welcome page for a fat page.
+
+== Architecture
+
+The application follows a single-page application (SPA) architecture with a lightweight welcome page and a feature-rich main application.
+
+.C4 Container Diagram
+[plantuml, target=architecture, format=svg]
+----
+include::architecture.puml[]
+----
+
+== Components
+
+=== Welcome Page
+* Fast-loading initial component
+* Minimal dependencies
+* Handles basic routing
+
+=== Main Application
+* Feature-rich application
+* Loaded on demand
+* Contains the primary application logic
+
+== Deployment
+
+The application is deployed using the following pipeline:
+
+. GitHub Actions builds the application
+. Deploys to GitHub Pages branch (`gh-pages`)
+. Cloudflare Pages serves the content globally
+
+== Development
+
+=== Build
+
+[source,bash]
+----
+trunk build --release
+----
+
+=== Serve
+
+[source,bash]
+----
+trunk serve
+----
+
+== TODO
+
+* The main app must have proper exports.
+* The load main app must access it to render the right route.
+
+== License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
