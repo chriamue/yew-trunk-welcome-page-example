@@ -1,29 +1,39 @@
-use crate::config::full_path;
 use yew_router::prelude::*;
 
 #[derive(Clone, Routable, PartialEq, Debug)]
 pub enum Route {
     #[at("/")]
     Root,
-    #[at("/p/welcome")]
+    #[at("/welcome")]
     Welcome,
-    #[at("/p")]
+    #[at("/home")]
     Home,
-    #[at("/p/about")]
+    #[at("/about")]
     About,
     #[not_found]
-    #[at("/p/*")]
+    #[at("/*")]
     NotFound,
 }
 
 impl Route {
     pub fn to_path(&self) -> String {
-        full_path(match self {
+        let base_path = web_sys::window()
+            .and_then(|w| w.document())
+            .and_then(|d| d.base_uri().ok())
+            .flatten()
+            .unwrap_or_default();
+
+        let path = match self {
             Route::Root => "/",
-            Route::Welcome => "/p/welcome",
-            Route::Home => "/p",
-            Route::About => "/p/about",
-            Route::NotFound => "/p/404",
-        })
+            Route::Welcome => "/welcome",
+            Route::Home => "/home",
+            Route::About => "/about",
+            Route::NotFound => "/404",
+        };
+
+        match base_path.eq("/") {
+            true => path.to_string(),
+            false => format!("{}{}", base_path, path),
+        }
     }
 }

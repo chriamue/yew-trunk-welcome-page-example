@@ -1,5 +1,3 @@
-name: GitHub Pages
-
 on:
   push:
     branches: ["main"]
@@ -8,8 +6,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  BASE_URL: "" # Empty for root
-  MAIN_APP_PATH: "/p" # main application path
+  BASE_URL: "/"
 
 jobs:
   build-and-deploy:
@@ -36,30 +33,20 @@ jobs:
       # Build Main Application
       - name: Build main application
         run: |
-          export BASE_PATH="${{ env.MAIN_APP_PATH }}"
-          trunk build --release --public-url="${{ env.MAIN_APP_PATH }}"
-          mkdir -p dist_temp"${BASE_PATH}"
-          cp -r dist/* dist_temp"${BASE_PATH}"/
+          export BASE_PATH=""
+          trunk build --release --public-url="/"
 
       # Setup routes
-      - name: Setup main app routes
+      - name: Setup routes
         run: |
-          mkdir -p dist_temp${{ env.MAIN_APP_PATH }}/{welcome,about}
-          cp dist_temp${{ env.MAIN_APP_PATH }}/index.html dist_temp${{ env.MAIN_APP_PATH }}/welcome/index.html
-          cp dist_temp${{ env.MAIN_APP_PATH }}/index.html dist_temp${{ env.MAIN_APP_PATH }}/about/index.html
-
-      # Build Welcome App
-      - name: Build welcome app
-        run: |
-          export BASE_PATH=""
-          trunk build --release --public-url="${{ env.BASE_URL }}"
-          cp -r dist/* dist_temp/
+          mkdir -p dist/{welcome,about,home}
+          cp dist/index.html dist/welcome/index.html
+          cp dist/index.html dist/about/index.html
+          cp dist/index.html dist/home/index.html
 
       # Prepare distribution
       - name: Prepare final distribution
         run: |
-          rm -rf dist
-          mv dist_temp dist
           cp dist/index.html dist/404.html
 
       - name: Deploy
