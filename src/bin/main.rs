@@ -13,16 +13,28 @@ fn main_app() -> Html {
     }
 }
 
-#[wasm_bindgen]
-pub fn render_app(root_selector: String) {
-    let window = web_sys::window().unwrap();
-    let document = window.document().unwrap();
+#[wasm_bindgen(js_name = render_app)]
+pub fn render_app(root_selector: String) -> Result<(), JsValue> {
+    console_error_panic_hook::set_once();
+
+    log::info!("Rendering main app to selector: {}", root_selector);
+
+    let window = web_sys::window().ok_or_else(|| JsValue::from_str("No window found"))?;
+    let document = window
+        .document()
+        .ok_or_else(|| JsValue::from_str("No document found"))?;
+
     let root = document
         .query_selector(&root_selector)
-        .expect("Failed to find root element")
-        .expect("Root element is None");
+        .map_err(|_| JsValue::from_str("Failed to query selector"))?
+        .ok_or_else(|| JsValue::from_str("Root element not found"))?;
 
     yew::Renderer::<Main>::with_root(root).render();
+
+    log::info!("Main app rendered successfully");
+    Ok(())
 }
 
-pub fn main() {}
+pub fn main() {
+    wasm_logger::init(wasm_logger::Config::default());
+}

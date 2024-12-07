@@ -26,28 +26,50 @@ pub fn main_app() -> Html {
 
                 wasm_bindgen_futures::spawn_local(async move {
                     let window = web_sys::window().expect("no global `window` exists");
+                    let mut attempts = 0;
+                    const MAX_ATTEMPTS: i32 = 20;
 
-                    log::info!("Loading main app...");
-                    // Wait for render_app to be available
-                    while js_sys::Reflect::get(&window, &JsValue::from_str("render_app")).is_err() {
-                        gloo_timers::future::TimeoutFuture::new(150).await;
+                    while attempts < MAX_ATTEMPTS {
+                        log::debug!("Checking for render_app...{}", attempts);
+                        match js_sys::Reflect::get(&window, &JsValue::from_str("render_app")) {
+                            Ok(render_app_value) => {
+                                gloo_timers::future::TimeoutFuture::new(20).await;
+                                if render_app_value.is_function() {
+                                    log::info!("Found render_app function");
+                                    let render_app =
+                                        render_app_value.unchecked_into::<js_sys::Function>();
+
+                                    match render_app
+                                        .call1(&JsValue::NULL, &JsValue::from_str("#app"))
+                                    {
+                                        Ok(_) => {
+                                            log::info!("Successfully called render_app");
+                                            app_js_state.set(AppJsState::Loaded);
+                                            return;
+                                        }
+                                        Err(e) => {
+                                            let error_msg =
+                                                format!("Failed to call render_app: {:?}", e);
+                                            log::error!("{}", error_msg);
+                                            app_js_state.set(AppJsState::Error(error_msg));
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            Err(_) => {
+                                attempts += 1;
+                                log::debug!(
+                                    "Waiting for render_app... attempt {}/{}",
+                                    attempts,
+                                    MAX_ATTEMPTS
+                                );
+                                gloo_timers::future::TimeoutFuture::new(200).await;
+                            }
+                        }
                     }
 
-                    match js_sys::Reflect::get(&window, &JsValue::from_str("render_app")) {
-                        Ok(render_app_fn) => {
-                            log::info!("render_app function found");
-                            let render_app: js_sys::Function = render_app_fn.dyn_into().unwrap();
-                            let _ = render_app.call1(&JsValue::NULL, &JsValue::from_str("#app"));
-
-                            app_js_state.set(AppJsState::Loaded);
-                        }
-                        Err(e) => {
-                            app_js_state.set(AppJsState::Error(format!(
-                                "Failed to get render_app function: {:?}",
-                                e
-                            )));
-                        }
-                    }
+                    app_js_state.set(AppJsState::Error("Timeout waiting for render_app".into()));
                 });
             }
             || ()
@@ -56,8 +78,22 @@ pub fn main_app() -> Html {
 
     match (*app_js_state).clone() {
         AppJsState::Loaded => html! { <div id="app"></div> },
-        AppJsState::Error(err) => html! { <div id="app">{"Error loading main app: "}{err}</div> },
-        AppJsState::Loading => html! { <div id="app">{"Loading..."}</div> },
-        AppJsState::NotLoaded => html! { <div id="app">{"Preparing to load main app..."}</div> },
+        AppJsState::Error(err) => html! {
+            <div id="app" class="error">
+                <h2>{"Error Loading Main Application"}</h2>
+                <p>{err}</p>
+                <p>{"Please try refreshing the page."}</p>
+            </div>
+        },
+        AppJsState::Loading => html! {
+            <div id="app" class="loading">
+                <p>{"Loading main application..."}</p>
+            </div>
+        },
+        AppJsState::NotLoaded => html! {
+            <div id="app" class="not-loaded">
+                <p>{"Preparing to load main application..."}</p>
+            </div>
+        },
     }
 }

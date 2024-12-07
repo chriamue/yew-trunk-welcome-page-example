@@ -15,8 +15,11 @@ wasm-bindgen-futures = "0.4"
 wasm-bindgen = "0.2"
 
 [dependencies]
+log = { workspace = true }
 yew = { workspace = true }
 web-sys = { workspace = true }
 yew-router = { workspace = true }
 routing = { path = "routing" }
 wasm-bindgen = { workspace = true }
+console_error_panic_hook = { version = "0.1" }
+wasm-logger = { version = "*" }
