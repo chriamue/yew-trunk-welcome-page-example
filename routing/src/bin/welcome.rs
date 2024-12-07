@@ -1,4 +1,4 @@
-use welcome_page::App;
+use routing::App;
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());

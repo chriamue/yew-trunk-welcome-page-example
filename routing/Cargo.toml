@@ -1,10 +1,10 @@
 [package]
-name = "welcome-page"
+name = "routing"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-log = "0.4"
+log = { workspace = true }
 yew = { workspace = true }
 web-sys = { workspace = true }
 yew-router = { workspace = true }

@@ -1,8 +1,8 @@
 use crate::{About, Home};
-use welcome_page::{NotFound, Welcome};
+use routing::{NotFound, Welcome};
 use yew::prelude::*;
 
-pub use welcome_page::Route;
+pub use routing::Route;
 
 pub fn switch(switch: Route) -> Html {
     match switch {

@@ -9,4 +9,4 @@ pub use app::App;
 pub use home::Home;
 pub use main_app::MainApp;
 pub use routes::{switch, Route};
-pub use welcome_page::{config, Navigation, NotFound, Welcome};
+pub use routing::{config, Navigation, NotFound, Welcome};

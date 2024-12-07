@@ -1,6 +1,6 @@
 pub struct MainApp;
 use crate::{About, Home, NotFound, Route};
-use welcome_page::Switch;
+use routing::Switch;
 use yew::prelude::*;
 
 impl Switch for MainApp {
